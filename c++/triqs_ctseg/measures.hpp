@@ -16,3 +16,4 @@
 #include "./measures/state_hist.hpp"
 #include "./measures/four_point.hpp"
 #include "./measures/visualize_config.hpp"
+#include "./measures/auto_corr_time.hpp"

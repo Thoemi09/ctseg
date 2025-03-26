@@ -120,6 +120,10 @@ namespace triqs_ctseg {
       CTQMC.add_measure(measures::four_point{p, wdata, config, results}, "Four-point correlation function");
     if (p.visualize_config) CTQMC.add_measure(measures::visualize_config{config}, "Visualizing configurations");
 
+    double sign_act = 0.0;
+    double order_act = 0.0;
+    CTQMC.add_measure(measures::auto_correlation_time{sign_act, order_act, [&]() { return config.Delta_order(); }}, "Autocorrelation time");
+
     // Run and collect results
     CTQMC.warmup_and_accumulate(p.n_warmup_cycles, p.n_cycles, p.length_cycle,
                                 triqs::utility::clock_callback(p.max_time));
@@ -127,6 +131,8 @@ namespace triqs_ctseg {
 
     // Report sign and average order
     if (c.rank() == 0) {
+      spdlog::info("Autocorrelation time of sign: {}", sign_act);
+      spdlog::info("Autocorrelation time of perturbation order: {}", order_act);
       spdlog::info("Average sign: {}", results.average_sign);
       if (results.average_order_Delta)
         spdlog::info("Average perturbation order in Delta: {:.3f}", results.average_order_Delta.value());
